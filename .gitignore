@@ -37,8 +37,8 @@ ENV/
 .venv/
 .ENV/
 
-# Static files cache
-static/
+# Keep the entire static folder if all files are needed
+!static/
 
 # Node modules (if any frontend work is added)
 node_modules/
