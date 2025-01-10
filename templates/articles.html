@@ -1,136 +1,50 @@
-<!--
-===================================================================================
-File Name: articles.html
-
-===================================================================================
-Description:
-This file serves as the primary HTML template for the Article Ideas Generator web app. 
-It dynamically renders content based on the Flask backend, using Jinja2 templating to
-integrate data fetched from the MediaWiki Action API.
-
-===================================================================================
-Purpose:
-- Provides a user-friendly interface for navigating through article ideas.
-- Dynamically displays categories, subcategories, and "red links" (missing Wikipedia articles).
-- Enables users to explore content categories and discover new article topics for Wikipedia.
-
-===================================================================================
-Usage:
-- This template is rendered by the Flask application (`articles.py`) to display results.
-- Data passed to the template includes:
-  1. `results`: A list of dynamic content (categories, subcategories, or red links).
-  2. `pagetype`: Indicates the type of content being displayed (e.g., 'category', 'subcategory', or 'links').
-
-- To serve this template, ensure the Flask app is configured correctly with the `templates` folder.
-
-===================================================================================
-Key Components:
-1. **Title Section**:
-   - Sets the title of the page: `<title>Article Ideas Generator</title>`.
-   - Uses external fonts for a unique visual style.
-
-2. **Dynamic Content Rendering**:
-   - Employs Jinja2 conditional logic to display appropriate content based on the `pagetype`.
-   - Handles three primary states:
-     1. Displaying a list of categories or subcategories.
-     2. Displaying a list of "red links" (missing articles).
-     3. Displaying an error message when no results are found.
-
-3. **Buttons and Navigation**:
-   - Includes buttons for user interaction:
-     - Navigate to the homepage.
-     - Select categories or subcategories.
-     - Start over when no results are available.
-
-4. **Styling**:
-   - Links to an external stylesheet (`/static/style.css`) for consistent UI design.
-   - Integrates custom fonts using `@font-face` hosted by Wikimedia Labs.
-
-===================================================================================
-Implementation Details:
-1. **Title Section**:
-   - `<title>`: Sets the page title.
-   - `<link>`: Imports external fonts (Amatic SC and Josefin Sans) and a local stylesheet.
-
-2. **Main Content Area**:
-   - Header: Displays a static title, "Article Ideas Generator."
-   - Conditional Logic (`{% if ... %}`):
-     - Dynamically determines whether to display categories, subcategories, red links, or error messages.
-
-3. **Jinja2 Loops**:
-   - `{% for link in results %}`: Iterates through the `results` list to generate a hyperlink for each missing article.
-   - `{% for pagename in results %}`: Creates buttons for each category or subcategory.
-
-4. **Fallback Handling**:
-   - Displays a user-friendly error message ("Ooooops! We couldn't find any results.") if no content is available.
-
-5. **CSS Integration**:
-   - `<link rel="stylesheet" href="/static/style.css">`: Links to the local CSS file for consistent design.
-
-===================================================================================
-Key Points, Ideas, and Concepts:
-1. **Dynamic Rendering**:
-   - The template is tightly coupled with the Flask backend and relies on data passed as context variables.
-   - Jinja2's conditional blocks (`{% if %}`) and loops (`{% for %}`) enable flexible rendering.
-
-2. **Error Resilience**:
-   - The template gracefully handles scenarios where no data is available, improving user experience.
-
-3. **Scalability**:
-   - The modular structure (separating backend logic and frontend rendering) makes it easy to extend features.
-
-4. **User Interaction**:
-   - Simple and intuitive navigation through categories, subcategories, and red links.
-
-5. **External Dependencies**:
-   - Relies on Wikimedia-hosted font files for visual enhancements.
-   - Expects a functioning backend to provide data.
-
-===================================================================================
-Notes:
-- Ensure that the `/static/style.css` file is properly configured and accessible to the application.
-- The template assumes that `results` and `pagetype` are always passed from the Flask backend. Handle missing or malformed data appropriately.
-- Additional customization (e.g., color scheme, layout) can be performed by modifying the CSS file.
-- Test responsiveness across devices to ensure a consistent user experience.
-
-===================================================================================
--->
-
-<title>Article Ideas Generator</title>
-
-<link
-  rel="stylesheet"
-  href="//tools-static.wmflabs.org/fontcdn/css?family=Amatic+SC:700"
-/>
-<link
-  rel="stylesheet"
-  href="//tools-static.wmflabs.org/fontcdn/css?family=Josefin+Sans"
-/>
-<link rel="stylesheet" href="/static/style.css" />
-
-<div>
-  <h1>Article Ideas Generator</h1>
-  {% if 'links' in pagetype %}
-  <p>Some ideas for topics to write articles on:</p>
-  {% for link in results %}
-  <a
-    href="//en.wikipedia.org/w/index.php?title={{ link }}&action=edit&redlink=1"
-    >{{ link }}</a
-  >
-  <br />
-  {% endfor %}
-  <button onclick="location.href='/'">Take me to the homepage</button>
-  {% else %} {% if results %}
-  <p>Choose a {{ pagetype }}</p>
-  <form method="POST">
-    {% for pagename in results %}
-    <button name="{{ pagetype }}" class="{{ pagetype }}" value="{{ pagename }}">
-      {{ pagename }}
-    </button>
-    {% endfor %}
-  </form>
-  {% else %}
-  <p>Ooooops! We couldn't find any results.</p>
-  <button onclick="location.href='/'">Start over</button>
-  {% endif %} {% endif %}
-</div>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Article Ideas Generator</title>
+    <link
+      rel="stylesheet"
+      href="//tools-static.wmflabs.org/fontcdn/css?family=Amatic+SC:700"
+    />
+    <link
+      rel="stylesheet"
+      href="//tools-static.wmflabs.org/fontcdn/css?family=Josefin+Sans"
+    />
+    <link rel="stylesheet" href="/static/style.css" />
+  </head>
+  <body>
+    <div>
+      <h1>Article Ideas Generator</h1>
+      {% if 'links' in pagetype %}
+      <p>Some ideas for topics to write articles on:</p>
+      {% for link in results %}
+      <a
+        href="//en.wikipedia.org/w/index.php?title={{ link }}&action=edit&redlink=1"
+      >
+        {{ link }}
+      </a>
+      <br />
+      {% endfor %}
+      <button onclick="location.href='/'">Take me to the homepage</button>
+      {% elif results %}
+      <p>Choose a {{ pagetype }}</p>
+      <form method="POST">
+        {% for pagename in results %}
+        <button
+          name="{{ pagetype }}"
+          class="{{ pagetype }}"
+          value="{{ pagename }}"
+        >
+          {{ pagename }}
+        </button>
+        {% endfor %}
+      </form>
+      {% else %}
+      <p>Ooooops! We couldn't find any results.</p>
+      <button onclick="location.href='/'">Start over</button>
+      {% endif %}
+    </div>
+  </body>
+</html>

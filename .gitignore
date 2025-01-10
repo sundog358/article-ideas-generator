@@ -46,3 +46,9 @@ node_modules/
 # IDE-specific files
 .vscode/
 .idea/
+
+# Notes and Md files
+
+*.md
+*.ipynb
+*.txt
